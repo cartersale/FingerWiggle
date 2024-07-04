@@ -1,0 +1,41 @@
+% Select the trial condition to plot
+trial_condition = 'IM1'; 
+
+% Get the number of bins (assuming it is 12)
+num_bins = 12;
+
+% Initialize a cell array to store aggregated data for each bin
+aggregated_data = cell(1, num_bins);
+
+% Loop through each participant in the selected trial condition
+trial_data = segmentedRelPhaseStruct.(trial_condition);
+for p = 1:length(trial_data)
+    % Loop through each bin
+    for segment_num = 1:num_bins
+        field_name = ['Segment', num2str(segment_num)];
+        relPhase_data = trial_data(p).(field_name);
+        
+        if ~isempty(relPhase_data)
+            % Flatten the data to a single vector (if it is a matrix)
+            relPhase_data = relPhase_data(:);
+            
+            % Append the data to the corresponding bin in aggregated_data
+            aggregated_data{segment_num} = [aggregated_data{segment_num}; relPhase_data];
+        end
+    end
+end
+
+% Create subplots for each bin
+figure;
+for segment_num = 1:num_bins
+    subplot(1, num_bins, segment_num);
+    histogram(aggregated_data{segment_num});
+    title(['Bin ', num2str(segment_num)]);
+    xlabel('relPhase');
+    ylabel('Occurrence');
+    xlim([0, 360]); 
+    xline(180)
+end
+
+% Add a main title to the figure
+sgtitle(['Distribution of relPhase for ', trial_condition]);
