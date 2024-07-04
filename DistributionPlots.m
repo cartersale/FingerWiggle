@@ -1,5 +1,9 @@
+% Assuming segmentedRelPhaseStruct is already created and loaded in the workspace
 % Select the trial condition to plot
-trial_condition = 'IM1'; 
+trial_condition = 'IM1';
+
+% Specify participants to include 
+participants_to_include = [1, 2, 5]; 
 
 % Get the number of bins (assuming it is 12)
 num_bins = 12;
@@ -7,9 +11,9 @@ num_bins = 12;
 % Initialize a cell array to store aggregated data for each bin
 aggregated_data = cell(1, num_bins);
 
-% Loop through each participant in the selected trial condition
+% Loop through each specified participant in the selected trial condition
 trial_data = segmentedRelPhaseStruct.(trial_condition);
-for p = 1:length(trial_data)
+for p = participants_to_include
     % Loop through each bin
     for segment_num = 1:num_bins
         field_name = ['Segment', num2str(segment_num)];
@@ -33,9 +37,11 @@ for segment_num = 1:num_bins
     title(['Bin ', num2str(segment_num)]);
     xlabel('relPhase');
     ylabel('Occurrence');
-    xlim([0, 360]); 
-    xline(180)
+    xlim([0, 360]);  % Adjusted to fit standardized relPhase values
+    xline(180, '-');
+    xline(180+60, '--');
+    xline(180-60, '--');
 end
 
 % Add a main title to the figure
-sgtitle(['Distribution of relPhase for ', trial_condition]);
+sgtitle(['Distribution of relPhase for ', trial_condition, ' (Participants: ', num2str(participants_to_include), ')']);
